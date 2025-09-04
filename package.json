@@ -1,0 +1,22 @@
+{
+  "name": "ai_review",
+  "version": "1.0.0",
+  "description": "AI Server for coding Review (Slave) :)))",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NguyenChanhDat/AI_Coding_Review_Homie.git"
+  },
+  "keywords": [
+    "homie"
+  ],
+  "author": "NguyenChanhDat",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NguyenChanhDat/AI_Coding_Review_Homie/issues"
+  },
+  "homepage": "https://github.com/NguyenChanhDat/AI_Coding_Review_Homie#readme"
+}
