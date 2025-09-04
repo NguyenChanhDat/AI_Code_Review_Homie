@@ -4,7 +4,8 @@
   "description": "AI Server for coding Review (Slave) :)))",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "dev": "node src/index.js"
   },
   "repository": {
     "type": "git",
@@ -18,5 +19,13 @@
   "bugs": {
     "url": "https://github.com/NguyenChanhDat/AI_Coding_Review_Homie/issues"
   },
-  "homepage": "https://github.com/NguyenChanhDat/AI_Coding_Review_Homie#readme"
+  "homepage": "https://github.com/NguyenChanhDat/AI_Coding_Review_Homie#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "octokit": "^5.0.3",
+    "ollama": "^0.5.17"
+  },
+  "type": "module"
 }
