@@ -1,5 +1,4 @@
 import { ollamaGlobal } from '../config/ollama.config.js';
-import { AI_MODEL } from '../common/constant/index.js';
 import { convertToSingleString } from './text.service.js';
 import { fetchFileChangesContent } from './octokit.service.js';
 
@@ -18,12 +17,21 @@ export const getAICodeReviewResponse = async ({
   const diffText = convertToSingleString(filesChangesContent);
 
   return await ollamaGlobal.chat({
-    model: AI_MODEL,
+    model: process.env.AI_MODEL,
     messages: [
       {
         role: 'system',
-        content:
-          'You are a senior code reviewer. Review code changes and give constructive feedback in English.',
+        content: `
+      You are a senior code reviewer.
+      Your task is to:
+      - Provide a short and clear summary of the pull request changes.
+      - Point out strengths or good practices in the code, if any.
+      - Identify bad practices or potential issues. When possible, include the exact code snippets inside markdown code blocks (use \`\`\`ts ... \`\`\`) to show the problematic lines.
+      - Give constructive, practical suggestions on how to fix or improve them.
+      
+      Keep your review professional, concise, and easy to understand.
+      Structure your response under clear sections: "Summary", "Strengths", "Areas to Improve".
+      `,
       },
       {
         role: 'user',

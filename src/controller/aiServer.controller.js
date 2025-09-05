@@ -6,13 +6,14 @@ export const postGitInfor = async (req, res) => {
   try {
     const { pullNumber, secretToken } = req.body;
     const octokitInstance = createOctokitInstance(secretToken);
-    const reviewResponse = await getAICodeReviewResponse({
+    const { message, ...rest } = await getAICodeReviewResponse({
       octokitInstance,
       pullNumber,
     });
+    console.log('message.content ', JSON.stringify(message.content, null, 2));
     await postReviewToPRComment(octokitInstance, {
       pullNumber,
-      reviewResponse,
+      reviewResponse: message.content,
     });
     res.status(200).json({ ok: true });
   } catch (error) {

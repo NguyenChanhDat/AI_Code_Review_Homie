@@ -32,7 +32,7 @@ export const postReviewToPRComment = async (
       owner: process.env.REPO_OWNER,
       repo: process.env.REPOSITORY_NAME,
       issue_number: pullNumber,
-      body: reviewResponse.message.content,
+      body: reviewResponse,
     }
   );
 };
