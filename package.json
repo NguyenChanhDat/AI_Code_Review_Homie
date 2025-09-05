@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/NguyenChanhDat/AI_Coding_Review_Homie#readme",
   "dependencies": {
+    "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
