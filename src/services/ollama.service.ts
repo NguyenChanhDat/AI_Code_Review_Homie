@@ -1,11 +1,13 @@
-import { ollamaGlobal } from '../config/ollama.config.js';
-import { convertToSingleString } from './text.service.js';
-import { fetchFileChangesContent } from './octokit.service.js';
+import { ollamaGlobal } from '../config/ollama.config';
+import { convertToSingleString } from './text.service';
+import { fetchFileChangesContent } from './octokit.service';
+import { Octokit } from 'octokit';
 
-export const getAICodeReviewResponse = async ({
-  octokitInstance,
-  pullNumber,
+export const getAICodeReviewResponse = async (input: {
+  octokitInstance: Octokit;
+  pullNumber: number;
 }) => {
+  const { octokitInstance, pullNumber } = input;
   const filesChangesContent = await fetchFileChangesContent(
     octokitInstance,
     pullNumber
@@ -17,7 +19,7 @@ export const getAICodeReviewResponse = async ({
   const diffText = convertToSingleString(filesChangesContent);
 
   return await ollamaGlobal.chat({
-    model: process.env.AI_MODEL,
+    model: process.env.AI_MODEL || 'codellama:7b',
     messages: [
       {
         role: 'system',

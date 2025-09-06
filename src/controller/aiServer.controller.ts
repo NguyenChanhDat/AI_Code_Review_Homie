@@ -1,8 +1,11 @@
-import { getAICodeReviewResponse } from '../services/ollama.service.js';
-import { postReviewToPRComment } from '../services/octokit.service.js';
-import { createOctokitInstance } from '../services/octokit.service.js';
+import { Request, Response } from 'express';
+import {
+  createOctokitInstance,
+  postReviewToPRComment,
+} from '../services/octokit.service';
+import { getAICodeReviewResponse } from '../services/ollama.service';
 
-export const postGitInfor = async (req, res) => {
+export const postGitInfor = async (req: Request, res: Response) => {
   try {
     const { pullNumber, secretToken } = req.body;
     const octokitInstance = createOctokitInstance(secretToken);

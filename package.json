@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "test",
-    "dev": "node src/index.js",
-    "ollama": "chmod +x tools/runOllama.sh && sh ./tools/runOllama.sh"
+    "dev": "rm -rf dist && npm run build && node dist/src/index.js",
+    "ollama": "chmod +x tools/runOllama.sh && sh ./tools/runOllama.sh",
+    "build": "swc src -d dist -D"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/NguyenChanhDat/AI_Coding_Review_Homie#readme",
   "dependencies": {
+    "@swc/cli": "^0.7.8",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
@@ -29,5 +31,9 @@
     "octokit": "^5.0.3",
     "ollama": "^0.5.17"
   },
-  "type": "module"
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.1"
+  }
 }
