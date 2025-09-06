@@ -1,22 +1,23 @@
-import { ollamaGlobal } from '../config/ollama.config';
-import { convertToSingleString } from './text.service';
-import { fetchFileChangesContent } from './octokit.service';
-import { Octokit } from 'octokit';
+import { ollamaGlobal } from '../../config/ollama.config';
+import { IRepository } from '../repositories/interfaces/IRepository.service';
 
-export const getAICodeReviewResponse = async (input: {
-  octokitInstance: Octokit;
-  pullNumber: number;
-}) => {
-  const { octokitInstance, pullNumber } = input;
-  const filesChangesContent = await fetchFileChangesContent(
-    octokitInstance,
-    pullNumber
-  );
+export const getAICodeReviewResponse = async (
+  repositoryServiceInstance: IRepository,
+  input: {
+    authToken: string;
+    pullNumber: number;
+  }
+) => {
+  const { pullNumber, authToken } = input;
+  const filesChangesContent =
+    await repositoryServiceInstance.fetchFileChangesContent({
+      authToken,
+      pullNumber,
+    });
   console.log(
     'filesChangesContent ',
     JSON.stringify(filesChangesContent, null, 2)
   );
-  const diffText = convertToSingleString(filesChangesContent);
 
   return await ollamaGlobal.chat({
     model: process.env.AI_MODEL || 'codellama:7b',
@@ -37,7 +38,7 @@ export const getAICodeReviewResponse = async (input: {
       },
       {
         role: 'user',
-        content: `Here are the code changes from the pull request:\n\n${diffText}\n\nPlease provide a structured code review with:\n- High-level summary\n- Potential issues\n- Suggestions for improvement`,
+        content: `Here are the code changes from the pull request:\n\n${filesChangesContent}\n\nPlease provide a structured code review with:\n- High-level summary\n- Potential issues\n- Suggestions for improvement`,
       },
     ],
   });

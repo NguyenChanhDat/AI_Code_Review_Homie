@@ -1,20 +1,23 @@
 import { Request, Response } from 'express';
-import {
-  createOctokitInstance,
-  postReviewToPRComment,
-} from '../services/octokit.service';
-import { getAICodeReviewResponse } from '../services/ollama.service';
+import { getAICodeReviewResponse } from '../services/ollama/ollama.service';
+import { RepositoryFactory } from '../services/repositories/factory/repository.factory';
 
-export const postGitInfor = async (req: Request, res: Response) => {
+export const aiReviewWorkFlow = async (req: Request, res: Response) => {
   try {
-    const { pullNumber, secretToken } = req.body;
-    const octokitInstance = createOctokitInstance(secretToken);
-    const { message, ...rest } = await getAICodeReviewResponse({
-      octokitInstance,
-      pullNumber,
+    const { pullNumber, secretToken, repositoryName } = req.body;
+    const repositoryServicesInstance = RepositoryFactory.getRepository({
+      authToken: secretToken,
+      repositoryName,
     });
+    const { message } = await getAICodeReviewResponse(
+      repositoryServicesInstance,
+      {
+        authToken: secretToken,
+        pullNumber,
+      }
+    );
     console.log('message.content ', JSON.stringify(message.content, null, 2));
-    await postReviewToPRComment(octokitInstance, {
+    await repositoryServicesInstance.postReviewToPRComment({
       pullNumber,
       reviewResponse: message.content,
     });
