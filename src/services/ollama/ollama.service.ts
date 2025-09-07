@@ -24,21 +24,11 @@ export const getAICodeReviewResponse = async (
     messages: [
       {
         role: 'system',
-        content: `
-      You are a senior code reviewer.
-      Your task is to:
-      - Provide a short and clear summary of the pull request changes.
-      - Point out strengths or good practices in the code, if any.
-      - Identify bad practices or potential issues. When possible, include the exact code snippets inside markdown code blocks (use \`\`\`ts ... \`\`\`) to show the problematic lines.
-      - Give constructive, practical suggestions on how to fix or improve them.
-      
-      Keep your review professional, concise, and easy to understand.
-      Structure your response under clear sections: "Summary", "Strengths", "Areas to Improve".
-      `,
+        content: `As a senior code reviewer, summarize PR changes, highlight good practices, and identify issues with code snippets (\`\`\`ts ... \`\`\`). Suggest concise, practical fixes.`,
       },
       {
         role: 'user',
-        content: `Here are the code changes from the pull request:\n\n${filesChangesContent}\n\nPlease provide a structured code review with:\n- High-level summary\n- Potential issues\n- Suggestions for improvement`,
+        content: `PR changes:\n\n${filesChangesContent}\n\nProvide a structured review professional, consise, easy to understand.`,
       },
     ],
   });
