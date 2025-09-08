@@ -15,7 +15,7 @@ export const getAICodeReviewResponse = async (
       pullNumber,
     });
   console.log(
-    'filesChangesContent ',
+    'filesChangesContent after process: ',
     JSON.stringify(filesChangesContent, null, 2)
   );
 

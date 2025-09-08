@@ -18,6 +18,7 @@ export const aiReviewWorkFlow = async (req: Request, res: Response) => {
     );
     console.log('message.content ', JSON.stringify(message.content, null, 2));
     await repositoryServicesInstance.postReviewToPRComment({
+      authToken: secretToken,
       pullNumber,
       reviewResponse: message.content,
     });

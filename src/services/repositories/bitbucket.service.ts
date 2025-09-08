@@ -1,24 +1,21 @@
 import { IRepository } from './interfaces/IRepository.service.js';
+import { runShellCommand } from '../../utils/index.js';
 
-import fetch from 'node-fetch';
 export class BitbucketRepository implements IRepository {
   fetchFileChangesContent = async (input: {
     authToken: string;
     pullNumber: number;
   }): Promise<string> => {
     const { pullNumber, authToken } = input;
-    const filesChangesContent = (await fetch(
-      `https://api.bitbucket.org/2.0/repositories/${process.env.BITBUCKET_WORKSPACE}/${process.env.BITBUCKET_REPO_NAME}/pullrequests/${pullNumber}/diff`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-        redirect: 'follow',
-      }
-    )) as unknown as string;
+    const workspace = process.env.BITBUCKET_WORKSPACE;
+    const repo = process.env.BITBUCKET_REPO_NAME;
+    const prId = pullNumber;
+    const token = authToken;
+
+    const cmd = `curl -sL -H "Authorization: Bearer ${token}" "https://api.bitbucket.org/2.0/repositories/${workspace}/${repo}/pullrequests/${prId}/diff"`;
+
+    const filesChangesContent = (await runShellCommand(cmd)) as string;
     console.log('filesChangesContent ', filesChangesContent);
-    // .catch((err) => console.error(err));
     if (!filesChangesContent) {
       throw new Error('no files change for PR');
     }
@@ -31,6 +28,12 @@ export class BitbucketRepository implements IRepository {
     pullNumber: number;
   }): Promise<void> => {
     const { pullNumber, reviewResponse, authToken } = input;
+    const body = JSON.stringify({
+      content: {
+        raw: reviewResponse,
+      },
+    });
+
     await fetch(
       `https://api.bitbucket.org/2.0/repositories/${process.env.BITBUCKET_WORKSPACE}/${process.env.BITBUCKET_REPO_NAME}/pullrequests/${pullNumber}/comments`,
       {
@@ -40,7 +43,7 @@ export class BitbucketRepository implements IRepository {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: reviewResponse,
+        body,
       }
     );
   };
