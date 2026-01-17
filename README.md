@@ -1,150 +1,121 @@
-# AI_Coding_Review_Homie
+# AI-Powered Source Code Quality Assessment System
 
-# ai_review 🚀
+## Developing README
 
-ai_review is an **AI-powered server for coding review**.  
-it connects to github pull requests, runs automated analysis, and provides review comments using llms (ollama) and then would post review comment back to PR
+Please have a look at docs/ DEV.md
 
----
+## Overview
 
-## 📦 project info
-
-- **name**: `Pablo Debugcasso`
-- **description**: ai server for coding review (slave) :)))
-- **author**: [NguyenChanhDat](https://github.com/NguyenChanhDat)
-- **license**: isc
+This project aims to build an AI-powered system for automated source code quality assessment.  
+The system supports customizable review rules, quantitative evaluation of code quality, and advanced dashboards for both developers and technical managers.  
+Beyond traditional code review, the system also focuses on transparency, performance measurement, and infrastructure efficiency.
 
 ---
 
-## ⚙️ prerequisites
+## I. Review Features
 
-make sure you have installed:
+### 1. Custom Review Rules and Coding Principles
 
-- [node.js](https://nodejs.org/) (>= 18)
-- [typescript](https://www.typescriptlang.org/) no need to say much about this thing :))
-- [ollama](https://ollama.ai/) installed locally for llm inference
-- [docker](https://www.docker.com/) 2nd option, run ollama and chosen model on docker container if u want
+- Allows users to define **custom review rules** based on team-specific coding standards.
+- Supports adding **coding principles** (e.g. clean code, SOLID, security best practices).
+- Rules can be enabled, disabled, or prioritized per repository or project.
+- Designed to adapt to different teams and evolving coding conventions.
 
----
+### 2. Boilerplate Code Awareness
 
-## 🛠️ installation
-
-clone the repo:
-
-```bash
-git clone https://github.com/NguyenChanhDat/AI_Coding_Review_Homie.git
-cd AI_Coding_Review_Homie
-```
-
-install dependencies:
-
-```bash
-npm install
-```
+- Users can register **boilerplate code templates** (e.g. common configs, setup files).
+- The system recognizes boilerplate patterns and avoids redundant or noisy feedback.
+- Helps improve review accuracy and reduces unnecessary AI comments.
 
 ---
 
-## 🚀 usage
+## II. Evaluation Features
 
-start development server:
+### 1. Code Quality Grading System
 
-```bash
-npm run dev
-```
+- Each Merge Request (MR) is evaluated using a **grading scale**.
+- The system generates:
+  - Overall code quality score
+  - Rule-level and category-level scores
+- Enables objective comparison between MRs and tracks quality over time.
 
-install [ollama](https://ollama.ai/) ur-self locally or
-run ollama on Docker container by helper script:
+### 2. Contributor Performance Dashboards
 
-```bash
-npm run ollama
-```
+Dashboards provide insights into individual and team-level code quality trends:
 
----
+- Code quality score per contributor:
+  - Weekly
+  - Monthly
+  - Yearly
+- Improvement trends and consistency indicators
+- Contribution-based quality metrics to support fair and data-driven performance reviews
 
-## 📂 project structure
-
-```bash
-.
-├── src/
-│   └── index.js          # main server entry
-├── tools/
-│   └── runOllama.sh      # helper script to run ollama container
-├── package.json
-└── README.md
-```
+> These metrics are designed as **decision-support tools**, not surveillance mechanisms.
 
 ---
 
-## 🔑 environment variables
+## III. AI System & Infrastructure Efficiency Dashboard
 
-create a .env file in project root. common variables include:
+To ensure cost control, scalability, and system transparency, the project includes an infrastructure-focused dashboard.
 
-```bash
-OLLAMA_URL=http://127.0.0.1:11434  # (default ollama running url, u can also bind depend on ur personal favor)
-PORT_SERVER=your_chosen_port
-REPO_OWNER=your_repo_owner_name
-REPOSITORY_NAME=your_repo_name
-AI_MODEL=your_chosen_ai_model # (ex: codellama:7b)
-```
+### 1. AI Resource Usage Monitoring
+
+- Token consumption per:
+  - Merge Request
+  - Repository
+  - Contributor
+- Average tokens per file and per lines of code (LOC)
+- Estimated AI processing cost based on token usage
+- Identification of expensive review rules or configurations
+
+### 2. Model Performance Metrics
+
+- Average response time per review
+- Latency breakdown:
+  - Preprocessing
+  - Model inference
+  - Post-processing
+- Review throughput (MRs/hour, files/minute)
+- Cache hit ratio for repeated patterns and boilerplate code
+
+### 3. Review Effectiveness Analysis
+
+- Percentage of AI suggestions accepted or applied by developers
+- Repeated violations after AI feedback (false positive indicator)
+- Code quality improvement before and after review
+- Ranking of review rules based on practical impact
 
 ---
 
-## 🧪 scripts
+## IV. Infrastructure Health Monitoring
 
-script description
-
-```bash
-npm run dev	            # run the express server
-npm run ollama	        # run setup ollama container script
-```
+- CPU and memory usage during review processes
+- Review queue length and processing backlog
+- Error and failure rates (timeouts, model errors)
+- Peak usage analysis to support scalability planning
 
 ---
 
-## 📡 api usage
+## V. Dashboard Structure Summary
 
-the server exposes a POST /review endpoint.
+The system provides three main dashboard categories:
 
-### request:
+1. **Code Quality Dashboard**
+   - Scores, violations, improvements, and trends
 
-```http
-POST /review HTTP/1.1
-Content-Type: application/json
-```
+2. **Contributor Dashboard**
+   - Individual and team-level performance insights
 
-body:
+3. **AI System & Infrastructure Dashboard**
+   - Token usage, cost estimation, latency, and system efficiency
 
-```json
-{
-  "pullNumber": "42",
-  "secretToken": "ghp_xxx_your_github_token"
-}
-```
+---
 
-- pullNumber: the pr number to review
-- secretToken: github token for authentication
+## VI. Project Scope and Research Value
 
-### response:
+This project goes beyond automated code review by:
 
-```json
-{
-  "status": "success",
-  "message": "review has been submitted to pull request #42"
-}
-```
-
-## 🤝 contributing
-
-- fork the project
-
-- create your feature branch (git checkout -b feature/foo)
-
-- commit your changes (git commit -m 'add foo')
-
-- push to branch (git push origin feature/foo)
-
-- open a pull request
-
-## 🐛 issues
-
-if you encounter any bug or unexpected behavior, please open an issue here:
-[issue tracker](https://github.com/NguyenChanhDat/AI_Code_Review_Homie/issues)
+- Introducing measurable and explainable quality metrics
+- Supporting data-driven technical and managerial decisions
+- Addressing real-world constraints such as AI cost and system performance
+- Providing a foundation for future research in AI-assisted software engineering
