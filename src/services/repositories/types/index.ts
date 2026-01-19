@@ -1,6 +1,6 @@
 export type GitHubFileChangesType = {
   data: {
-    sha: string;
+    sha: string | null;
     filename: string;
     status:
       | 'added'
