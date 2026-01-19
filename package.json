@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "test",
-    "dev": "rm -rf dist && npm run build && node dist/src/index.js",
+    "dev-linux": "rm -rf dist && npm run build && node dist/src/index.js",
+    "dev-win": "powershell Remove-Item -Path dist -Recurse -Force && npm run build && node dist/src/index.js",
     "ollama": "chmod +x tools/runOllama.sh && sh ./tools/runOllama.sh",
     "build": "swc src -d dist -D",
     "typecheck": "tsc --noEmit"

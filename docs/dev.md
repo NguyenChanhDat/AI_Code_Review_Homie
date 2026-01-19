@@ -41,8 +41,16 @@ npm install
 
 start development server:
 
+For win:
+
 ```bash
-npm run dev
+npm run dev-win
+```
+
+For linux:
+
+```bash
+npm run dev-linux
 ```
 
 install [ollama](https://ollama.ai/) ur-self locally or
@@ -141,3 +149,7 @@ body:
 
 if you encounter any bug or unexpected behavior, please open an issue here:
 [issue tracker](https://github.com/NguyenChanhDat/AI_Code_Review_Homie/issues)
+
+## dev-details
+
+For better understanding how the codebase run, please have a look at: devDetail.ts
