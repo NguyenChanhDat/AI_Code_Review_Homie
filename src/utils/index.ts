@@ -8,3 +8,13 @@ export async function runShellCommand(cmd: string) {
     });
   });
 }
+export async function runPowerShellCommand(psCommand: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const wrappedCommand = `powershell.exe -NoProfile -NonInteractive -Command "${psCommand}"`;
+
+    exec(wrappedCommand, (error, stdout, stderr) => {
+      if (error) return reject(error);
+      resolve(stdout || stderr);
+    });
+  });
+}
