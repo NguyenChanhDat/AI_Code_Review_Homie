@@ -1,4 +1,4 @@
-import { runPowerShellCommand } from '../../utils';
+import { createAzureClient, runPowerShellCommand } from '../../utils';
 import { IRepository } from './interfaces/IRepository.service';
 import {
   NormalizedFileChange,
@@ -27,74 +27,66 @@ export class AzureDevOpsRepository implements IRepository {
     const { pullNumber, authToken, workspace, repoName } = input;
     const baseUrlParsed = input.baseUrl ?? 'dev.azure.com'; // newest version of Azure DevOps API's base Url
     // Please note that curl.exe is for Window Powershell, it would broken if server running on Linux, Mac,....
-    const takeIterationCommitsCmd = `curl.exe -u ":${authToken}" "https://${baseUrlParsed}/${workspace}/_apis/git/repositories/${repoName}/pullrequests/${pullNumber}/iterations"`;
-    const iterationCommitsContent = JSON.parse(
-      await runPowerShellCommand(takeIterationCommitsCmd),
-    ) as PullRequestIterationsResponse;
-    const iterationLen = iterationCommitsContent.value.length;
-    const takeLatestCommitsBlobCmd = `curl.exe -u ":${authToken}" "https://${baseUrlParsed}/${workspace}/_apis/git/repositories/${repoName}/pullrequests/${pullNumber}/iterations/${iterationLen}/changes"`;
-    const takeLatestCommitsBlobContent = JSON.parse(
-      await runPowerShellCommand(takeLatestCommitsBlobCmd),
-    ) as PullRequestIterationChangesResponse;
-    const collectedChanges: NormalizedFileChange[] = [];
+    const client = createAzureClient(baseUrlParsed, workspace, authToken);
 
-    for (const entry of takeLatestCommitsBlobContent.changeEntries) {
+    const iterationCommitsContent = (
+      await client.get<PullRequestIterationsResponse>(
+        `/_apis/git/repositories/${repoName}/pullrequests/${pullNumber}/iterations`,
+      )
+    ).data as unknown as PullRequestIterationsResponse;
+    const iterationLen = iterationCommitsContent.value.length;
+    const changesRes = (
+      await client.get<PullRequestIterationChangesResponse>(
+        `/_apis/git/repositories/${repoName}/pullrequests/${pullNumber}/iterations/${iterationLen}/changes`,
+        {
+          params: {
+            includeContent: true,
+            'api-version': '7.1',
+          },
+        },
+      )
+    ).data as unknown as PullRequestIterationChangesResponse;
+    const tasks = changesRes.changeEntries.map(async (entry) => {
       const { changeType, item } = entry;
-      let change: NormalizedFileChange | null = null;
+
       switch (changeType) {
         case 'add':
         case 'undelete':
-          change = await this.getAddedFile(item, {
+          return this.getAddedFile(item, {
             authToken,
-            pullNumber,
-            workspace,
-            repoName,
             baseUrl: baseUrlParsed,
+            pullNumber,
+            repoName,
+            workspace,
           });
-          break;
-
         case 'edit':
         case 'rename':
-          change = await this.getModifiedFile(item, {
+          return this.getModifiedFile(item, {
             authToken,
-            pullNumber,
-            workspace,
-            repoName,
             baseUrl: baseUrlParsed,
+            pullNumber,
+            repoName,
+            workspace,
           });
-          break;
-
         case 'delete':
-          change = await this.getDeletedFile(item, {
+          return this.getDeletedFile(item, {
             authToken,
-            pullNumber,
-            workspace,
-            repoName,
             baseUrl: baseUrlParsed,
+            pullNumber,
+            repoName,
+            workspace,
           });
-          break;
+        default:
+          return null;
       }
-      if (change) {
-        collectedChanges.push(change);
-      }
-    }
+    });
+
+    const collectedChanges = (await Promise.all(tasks)).filter(
+      Boolean,
+    ) as NormalizedFileChange[];
 
     return this.serializeDiffsForAI(collectedChanges);
   };
-
-  private serializeDiffsForAI(diffs: NormalizedFileChange[]): string {
-    return diffs
-      .map(
-        (d, i) => `
-        ### file ${i + 1}: ${d.path} (${d.changeType})
-        \`\`\`diff
-        ${d.diff}
-        \`\`\`
-        `,
-      )
-      .join('\n');
-  }
-
   private async getDeletedFile(
     item: PullRequestChangeItem,
     input: {
@@ -185,11 +177,11 @@ export class AzureDevOpsRepository implements IRepository {
       repoName,
       workspace,
     });
-
+    const diff = this.unifiedDiff('', content, item.path);
     return {
       path: item.path,
       changeType: 'add',
-      diff: content,
+      diff,
     };
   }
 
@@ -206,6 +198,19 @@ export class AzureDevOpsRepository implements IRepository {
     )) as string;
     return rs;
   };
+
+  private serializeDiffsForAI(diffs: NormalizedFileChange[]): string {
+    return diffs
+      .map(
+        (d, i) => `
+        ### file ${i + 1}: ${d.path} (${d.changeType})
+        \`\`\`diff
+        ${d.diff}
+        \`\`\`
+        `,
+      )
+      .join('\n');
+  }
 
   private unifiedDiff(
     oldContent: string,

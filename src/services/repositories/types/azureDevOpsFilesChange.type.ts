@@ -50,8 +50,10 @@ export interface PullRequestChangeEntry {
 
 export interface PullRequestChangeItem {
   path: string;
-  objectId: string; // after change
-  originalObjectId?: string; // before change (missing for add)
+  objectId: string;
+  originalObjectId?: string;
+  content?: string;
+  originalContent?: string;
 }
 
 export type ChangeType =
