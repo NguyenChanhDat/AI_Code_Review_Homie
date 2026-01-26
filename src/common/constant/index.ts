@@ -3,4 +3,5 @@ export const REPO = {
   GitHub: 'GitHub',
   BitBucket: 'BitBucket',
   GitLab: 'GitLab',
+  AzureDevOps: 'AzureDevOps',
 } as const;
