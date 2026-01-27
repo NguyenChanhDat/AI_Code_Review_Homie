@@ -7,11 +7,11 @@ import { IRepository } from '../interfaces/IRepository.service';
 
 export class RepositoryFactory {
   static getRepository(input: {
-    repositoryName: REPO_TYPE;
+    repositoryType: REPO_TYPE;
     authToken: string;
   }): IRepository {
-    const { authToken, repositoryName } = input;
-    switch (repositoryName) {
+    const { authToken, repositoryType } = input;
+    switch (repositoryType) {
       case 'GitHub':
         const octokitInstance = createOctokitInstance(authToken);
         return new GitHubRepository(octokitInstance);

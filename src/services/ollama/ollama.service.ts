@@ -6,18 +6,18 @@ export const getAICodeReviewResponse = async (
   input: {
     authToken: string;
     pullNumber: number;
-    repoName: string;
+    repositoryName: string;
     workspace: string;
     baseUrl: string;
   },
 ) => {
-  const { pullNumber, authToken, workspace, repoName, baseUrl } = input;
+  const { pullNumber, authToken, workspace, repositoryName, baseUrl } = input;
   const filesChangesContent =
     await repositoryServiceInstance.fetchFileChangesContent({
       authToken,
       pullNumber,
       workspace,
-      repoName,
+      repositoryName,
       baseUrl,
     });
   console.log(

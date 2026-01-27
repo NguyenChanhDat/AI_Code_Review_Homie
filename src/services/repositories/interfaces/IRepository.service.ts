@@ -3,7 +3,7 @@ export interface IRepository {
     authToken: string;
     pullNumber: number;
     workspace: string;
-    repoName: string;
+    repositoryName: string;
     baseUrl?: string;
   }): Promise<string>;
   postReviewToPRComment(input: {

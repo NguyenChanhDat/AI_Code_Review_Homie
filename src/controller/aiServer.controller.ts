@@ -4,17 +4,27 @@ import { RepositoryFactory } from '../services/repositories/factory/repository.f
 
 export const aiReviewWorkFlow = async (req: Request, res: Response) => {
   try {
-    const { pullNumber, secretToken, repositoryName } = req.body;
+    const {
+      pullNumber,
+      secretToken,
+      repositoryType,
+      repositoryName,
+      baseUrl,
+      workspace,
+    } = req.body;
     const repositoryServicesInstance = RepositoryFactory.getRepository({
       authToken: secretToken,
-      repositoryName,
+      repositoryType,
     });
     const { message } = await getAICodeReviewResponse(
       repositoryServicesInstance,
       {
         authToken: secretToken,
         pullNumber,
-      }
+        baseUrl,
+        repositoryName,
+        workspace,
+      },
     );
     console.log('message.content ', JSON.stringify(message.content, null, 2));
     await repositoryServicesInstance.postReviewToPRComment({
