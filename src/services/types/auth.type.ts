@@ -1,8 +1,8 @@
 export type AzureDevOpsConnectionData = {
-  authenticatedUser: AuthticatedUser;
+  authenticatedUser: AuthenticatedUser;
 };
 
-export type AuthticatedUser = {
+export type AuthenticatedUser = {
   id: string;
   providerDisplayName: string;
   customDisplayName: string;

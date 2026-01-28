@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {
-  AuthticatedUser,
+  AuthenticatedUser,
   AzureDevOpsConnectionData,
   PolicyConfiguration,
 } from '../types/auth.type';
@@ -14,7 +14,7 @@ export class AzureDevOpsAuthService {
   private async validatePersonalAccessToken(params: {
     organization: string;
     personalAccessToken: string;
-  }): Promise<AuthticatedUser> {
+  }): Promise<AuthenticatedUser> {
     const { organization, personalAccessToken } = params;
     const res = await axios.get<AzureDevOpsConnectionData>(
       `https://dev.azure.com/${organization}/_apis/connectionData`,
@@ -47,7 +47,7 @@ export class AzureDevOpsAuthService {
       {
         params: { 'api-version': '7.1' },
         headers: {
-          Authorization: `Basic ${Buffer.from(`:${personalAccessToken}`).toString('base64')}`,
+          Authorization: this.buildAuthHeader(personalAccessToken),
         },
       },
     );

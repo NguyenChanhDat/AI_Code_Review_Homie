@@ -12,10 +12,10 @@ export class RepositoryFactory {
   }): IRepository {
     const { authToken, repositoryType } = input;
     switch (repositoryType) {
-      case 'GitHub':
+      case 'GitHub': {
         const octokitInstance = createOctokitInstance(authToken);
         return new GitHubRepository(octokitInstance);
-
+      }
       case 'BitBucket':
         return new BitbucketRepository();
 

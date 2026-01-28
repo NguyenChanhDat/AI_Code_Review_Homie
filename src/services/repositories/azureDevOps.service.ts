@@ -1,4 +1,4 @@
-import { createAzureClient, runPowerShellCommand } from '../../utils';
+import { createAzureClient } from '../../utils';
 import { IRepository } from './interfaces/IRepository.service';
 import {
   NormalizedFileChange,
@@ -55,7 +55,6 @@ export class AzureDevOpsRepository implements IRepository {
           return this.getAddedFile(item, {
             authToken,
             baseUrl: baseUrlParsed,
-            pullNumber,
             repositoryName,
             workspace,
           });
@@ -64,7 +63,6 @@ export class AzureDevOpsRepository implements IRepository {
           return this.getModifiedFile(item, {
             authToken,
             baseUrl: baseUrlParsed,
-            pullNumber,
             repositoryName,
             workspace,
           });
@@ -72,7 +70,6 @@ export class AzureDevOpsRepository implements IRepository {
           return this.getDeletedFile(item, {
             authToken,
             baseUrl: baseUrlParsed,
-            pullNumber,
             repositoryName,
             workspace,
           });
@@ -91,7 +88,6 @@ export class AzureDevOpsRepository implements IRepository {
     item: PullRequestChangeItem,
     input: {
       authToken: string;
-      pullNumber: number;
       workspace: string; // organization
       repositoryName: string;
       baseUrl: string; // ex: soget-sone.visualstudio.com
@@ -101,12 +97,11 @@ export class AzureDevOpsRepository implements IRepository {
       throw new Error('Missing originalObjectId for deleted file');
     }
 
-    const { authToken, baseUrl, pullNumber, repositoryName, workspace } = input;
+    const { authToken, baseUrl, repositoryName, workspace } = input;
     const oldContent = await this.fetchBlob({
       authToken,
       baseUrl,
       blobVersion: item.originalObjectId,
-      pullNumber,
       repositoryName,
       workspace,
     });
@@ -122,13 +117,12 @@ export class AzureDevOpsRepository implements IRepository {
     item: PullRequestChangeItem,
     input: {
       authToken: string;
-      pullNumber: number;
       workspace: string; // organization
       repositoryName: string;
       baseUrl: string; // ex: soget-sone.visualstudio.com
     },
   ): Promise<NormalizedFileChange> {
-    const { authToken, baseUrl, pullNumber, repositoryName, workspace } = input;
+    const { authToken, baseUrl, repositoryName, workspace } = input;
     if (!item.originalObjectId) {
       throw new Error('Expected originalObjectId for modified file');
     }
@@ -137,7 +131,7 @@ export class AzureDevOpsRepository implements IRepository {
       authToken,
       baseUrl,
       blobVersion: item.originalObjectId,
-      pullNumber,
+
       repositoryName,
       workspace,
     });
@@ -145,7 +139,7 @@ export class AzureDevOpsRepository implements IRepository {
       blobVersion: item.objectId,
       authToken,
       baseUrl,
-      pullNumber,
+
       repositoryName,
       workspace,
     });
@@ -162,18 +156,16 @@ export class AzureDevOpsRepository implements IRepository {
     item: PullRequestChangeItem,
     input: {
       authToken: string;
-      pullNumber: number;
       workspace: string; // organization
       repositoryName: string;
       baseUrl: string; // ex: soget-sone.visualstudio.com
     },
   ): Promise<NormalizedFileChange> {
-    const { authToken, baseUrl, pullNumber, repositoryName, workspace } = input;
+    const { authToken, baseUrl, repositoryName, workspace } = input;
     const content = await this.fetchBlob({
       authToken,
       baseUrl,
       blobVersion: item.objectId,
-      pullNumber,
       repositoryName,
       workspace,
     });
@@ -187,16 +179,27 @@ export class AzureDevOpsRepository implements IRepository {
 
   private fetchBlob = async (input: {
     authToken: string;
-    pullNumber: number;
     workspace: string; // organization
     repositoryName: string;
-    baseUrl: string; // ex: soget-sone.visualstudio.com
+    baseUrl: string; // ex: dev.azure.com or soget-sone.visualstudio.com
     blobVersion: string;
   }): Promise<string> => {
-    const rs = (await runPowerShellCommand(
-      `curl.exe -u ":${input.authToken}" -H "Accept: application/octet-stream" "https://${input.baseUrl}/${input.workspace}/_apis/git/repositories/${input.repositoryName}/blobs/${input.blobVersion}?api-version=7.1"`,
-    )) as string;
-    return rs;
+    const { authToken, workspace, repositoryName, baseUrl, blobVersion } =
+      input;
+    const client = createAzureClient(baseUrl, workspace, authToken);
+    const res = await client.get<ArrayBuffer>(
+      `/_apis/git/repositories/${repositoryName}/blobs/${blobVersion}`,
+      {
+        params: {
+          'api-version': '7.1',
+        },
+        headers: {
+          Accept: 'application/octet-stream',
+        },
+        responseType: 'arraybuffer',
+      },
+    );
+    return Buffer.from(res.data).toString('utf-8');
   };
 
   private serializeDiffsForAI(diffs: NormalizedFileChange[]): string {
