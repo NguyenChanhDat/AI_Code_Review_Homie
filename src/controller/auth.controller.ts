@@ -26,5 +26,5 @@ export async function validateReviewerController(req: Request, res: Response) {
     return res.status(403).json({ message: 'user is not a required reviewer' });
   }
 
-  return res.status(200).json({ message: result });
+  return res.status(200).json(result);
 }

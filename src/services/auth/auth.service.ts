@@ -126,6 +126,7 @@ export class AzureDevOpsAuthService {
       user: {
         id: userInfor.id,
         email: userInfor.providerDisplayName,
+        displayName: userInfor.customDisplayName,
       },
       organization,
       project,

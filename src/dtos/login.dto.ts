@@ -3,6 +3,7 @@ export type LoginResponse = {
   user: {
     id: string;
     email?: string;
+    displayName: string;
   };
   organization: string;
   project: string;
