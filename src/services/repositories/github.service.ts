@@ -1,7 +1,7 @@
 import { Octokit } from 'octokit';
 import { GITHUB_HEADER_API_VERSION } from '../../common/constant/index.js';
 import { IRepository } from './interfaces/IRepository.service.js';
-import { GitHubFileChangesType } from './types/index.js';
+import { GitHubFileChangesType } from './types/githubFilesChange.type.js';
 
 export class GitHubRepository implements IRepository {
   constructor(private readonly octokitInstance: Octokit) {}

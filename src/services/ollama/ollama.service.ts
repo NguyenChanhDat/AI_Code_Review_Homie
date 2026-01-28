@@ -6,17 +6,23 @@ export const getAICodeReviewResponse = async (
   input: {
     authToken: string;
     pullNumber: number;
-  }
+    repositoryName: string;
+    workspace: string;
+    baseUrl: string;
+  },
 ) => {
-  const { pullNumber, authToken } = input;
+  const { pullNumber, authToken, workspace, repositoryName, baseUrl } = input;
   const filesChangesContent =
     await repositoryServiceInstance.fetchFileChangesContent({
       authToken,
       pullNumber,
+      workspace,
+      repositoryName,
+      baseUrl,
     });
   console.log(
     'filesChangesContent after process: ',
-    JSON.stringify(filesChangesContent, null, 2)
+    JSON.stringify(filesChangesContent, null, 2),
   );
 
   return await ollamaGlobal.chat({
