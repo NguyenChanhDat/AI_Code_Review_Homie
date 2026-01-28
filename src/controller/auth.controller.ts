@@ -1,6 +1,7 @@
 // src/controllers/auth.controller.ts
 import { Request, Response } from 'express';
 import { globalAuthService } from '../services/repositories/factory/auth.factory';
+import { LoginResponse } from '../dtos/login.dto';
 
 export async function validateReviewerController(req: Request, res: Response) {
   const personalAccessToken = req.header('x-azure-personalAccessToken');
@@ -14,14 +15,14 @@ export async function validateReviewerController(req: Request, res: Response) {
   if (!personalAccessToken || !organization || !project || !repositoryName) {
     return res.status(400).json({ message: 'missing parameters' });
   }
-  const result = await globalAuthService.validateReviewerAccess({
+  const result: LoginResponse = await globalAuthService.validateReviewerAccess({
     organization,
     project,
     repositoryName,
     personalAccessToken,
   });
 
-  if (!result.isReviewerByPolicy) {
+  if (!result.success) {
     return res.status(403).json({ message: 'user is not a required reviewer' });
   }
 

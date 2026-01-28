@@ -4,6 +4,7 @@ import {
   AzureDevOpsConnectionData,
   PolicyConfiguration,
 } from '../types/auth.type';
+import { LoginResponse } from '../../dtos/login.dto';
 
 export class AzureDevOpsAuthService {
   private buildAuthHeader(personalAccessToken: string) {
@@ -100,8 +101,9 @@ export class AzureDevOpsAuthService {
     project: string;
     repositoryName: string;
     personalAccessToken: string;
-  }): Promise<{ isReviewerByPolicy: boolean }> {
-    const { organization, personalAccessToken } = params;
+  }): Promise<LoginResponse> {
+    const { organization, personalAccessToken, project, repositoryName } =
+      params;
 
     // identify user from PAT
     const userInfor = await this.validatePersonalAccessToken({
@@ -119,6 +121,18 @@ export class AzureDevOpsAuthService {
       userInfor.id,
     );
 
-    return { isReviewerByPolicy };
+    return {
+      success: isReviewerByPolicy,
+      user: {
+        id: userInfor.id,
+        email: userInfor.providerDisplayName,
+      },
+      organization,
+      project,
+      repository: {
+        id: repositoryId,
+        name: repositoryName,
+      },
+    };
   }
 }
