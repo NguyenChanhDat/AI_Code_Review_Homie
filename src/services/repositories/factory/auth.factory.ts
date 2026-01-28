@@ -1,3 +1,4 @@
 import { AzureDevOpsAuthService } from '../../auth/auth.service';
+import { IAuthenService } from '../interfaces/IAuthen.service';
 
-export const globalAuthService = new AzureDevOpsAuthService();
+export const globalAuthService: IAuthenService = new AzureDevOpsAuthService();
