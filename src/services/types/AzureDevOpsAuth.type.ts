@@ -43,3 +43,16 @@ export type PolicyConfiguration = {
     [key: string]: unknown;
   };
 };
+
+export type BaseAzureDevOpsAuthen = {
+  authToken: string;
+  pullNumber: number;
+  workspace: string;
+  repositoryName: string;
+  baseUrl?: string;
+};
+
+export type GetFileChangeBaseType = Omit<
+  BaseAzureDevOpsAuthen,
+  'pullNumber' | 'baseUrl'
+> & { baseUrl: string };

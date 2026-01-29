@@ -3,7 +3,7 @@ import {
   AuthenticatedUser,
   AzureDevOpsConnectionData,
   PolicyConfiguration,
-} from '../types/auth.type';
+} from '../types/AzureDevOpsAuth.type';
 import { LoginResponse } from '../../dtos/login.dto';
 import { IAuthenService } from '../repositories/interfaces/IAuthen.service';
 

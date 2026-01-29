@@ -16,11 +16,12 @@ export class RepositoryFactory {
         const octokitInstance = createOctokitInstance(authToken);
         return new GitHubRepository(octokitInstance);
       }
-      case 'BitBucket':
+      case 'BitBucket': {
         return new BitbucketRepository();
-
-      case 'AzureDevOps':
+      }
+      case 'AzureDevOps': {
         return new AzureDevOpsRepository();
+      }
     }
     throw new Error('Invalid Repository type founded');
   }
