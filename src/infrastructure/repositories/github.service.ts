@@ -1,7 +1,7 @@
 import { Octokit } from 'octokit';
 import { GITHUB_HEADER_API_VERSION } from '../../common/constant/index.js';
-import { IRepository } from './interfaces/IRepository.service.js';
-import { GitHubFileChangesType } from './types/githubFilesChange.type.js';
+import { IRepository } from '../../domain/IRepository.service.js';
+import { GitHubFileChangesType } from '../types/types/githubFilesChange.type.js';
 
 export class GitHubRepository implements IRepository {
   constructor(private readonly octokitInstance: Octokit) {}
@@ -20,7 +20,7 @@ export class GitHubRepository implements IRepository {
         headers: {
           'X-GitHub-Api-Version': GITHUB_HEADER_API_VERSION,
         },
-      }
+      },
     );
     return this.convertToSingleString(filesChangesContent);
   };
@@ -36,12 +36,12 @@ export class GitHubRepository implements IRepository {
         repo: process.env.REPOSITORY_NAME || '',
         issue_number: pullNumber,
         body: reviewResponse,
-      }
+      },
     );
   };
 
   private convertToSingleString = (
-    filesChangesContent: GitHubFileChangesType
+    filesChangesContent: GitHubFileChangesType,
   ) => {
     return filesChangesContent.data
       .map((file) => {

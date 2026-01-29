@@ -1,4 +1,4 @@
-import { LoginResponse } from '../../../dtos/login.dto';
+import { LoginResponse } from '../dtos/login.dto';
 
 export interface IAuthenService {
   validateReviewerAccess(params: {

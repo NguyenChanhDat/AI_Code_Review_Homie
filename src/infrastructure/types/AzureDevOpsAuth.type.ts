@@ -1,3 +1,5 @@
+import { BaseAuth } from '../../domain/baseAuth.type';
+
 export type AzureDevOpsConnectionData = {
   authenticatedUser: AuthenticatedUser;
 };
@@ -44,13 +46,7 @@ export type PolicyConfiguration = {
   };
 };
 
-export type BaseAzureDevOpsAuthen = {
-  authToken: string;
-  pullNumber: number;
-  workspace: string;
-  repositoryName: string;
-  baseUrl?: string;
-};
+export type BaseAzureDevOpsAuthen = BaseAuth & { pullNumber: number };
 
 export type GetFileChangeBaseType = Omit<
   BaseAzureDevOpsAuthen,

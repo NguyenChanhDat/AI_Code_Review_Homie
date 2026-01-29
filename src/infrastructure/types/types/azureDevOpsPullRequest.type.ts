@@ -1,4 +1,4 @@
-import { BaseAzureDevOpsAuthen } from '../../types/AzureDevOpsAuth.type';
+import { BaseAzureDevOpsAuthen } from '../AzureDevOpsAuth.type';
 
 export type FetchPullRequestsInput = BaseAzureDevOpsAuthen & { limit: number };
 export type PullRequest = {

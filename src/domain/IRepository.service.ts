@@ -1,4 +1,4 @@
-import { BaseAzureDevOpsAuthen } from '../../types/AzureDevOpsAuth.type';
+import { BaseAzureDevOpsAuthen } from '../infrastructure/types/AzureDevOpsAuth.type';
 
 export interface IRepository {
   fetchFileChangesContent(input: BaseAzureDevOpsAuthen): Promise<string>;

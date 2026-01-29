@@ -5,7 +5,7 @@ import {
   PolicyConfiguration,
 } from '../types/AzureDevOpsAuth.type';
 import { LoginResponse } from '../../dtos/login.dto';
-import { IAuthenService } from '../repositories/interfaces/IAuthen.service';
+import { IAuthenService } from '../../domain/IAuthen.service';
 
 export class AzureDevOpsAuthService implements IAuthenService {
   private buildAuthHeader(personalAccessToken: string) {

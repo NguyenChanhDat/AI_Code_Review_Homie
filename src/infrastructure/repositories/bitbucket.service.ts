@@ -1,4 +1,4 @@
-import { IRepository } from './interfaces/IRepository.service.js';
+import { IRepository } from '../../domain/IRepository.service.js';
 import { runShellCommand } from '../../utils/index.js';
 
 export class BitbucketRepository implements IRepository {
@@ -44,7 +44,7 @@ export class BitbucketRepository implements IRepository {
           'Content-Type': 'application/json',
         },
         body,
-      }
+      },
     );
   };
 

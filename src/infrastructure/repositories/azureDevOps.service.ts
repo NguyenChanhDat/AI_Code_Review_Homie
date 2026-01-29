@@ -3,13 +3,13 @@ import {
   BaseAzureDevOpsAuthen,
   GetFileChangeBaseType,
 } from '../types/AzureDevOpsAuth.type';
-import { IRepository } from './interfaces/IRepository.service';
+import { IRepository } from '../../domain/IRepository.service';
 import {
   NormalizedFileChange,
   PullRequestChangeItem,
   PullRequestIterationChangesResponse,
   PullRequestIterationsResponse,
-} from './types/azureDevOpsFilesChange.type';
+} from '../types/types/azureDevOpsFilesChange.type';
 
 import { createTwoFilesPatch } from 'diff';
 
