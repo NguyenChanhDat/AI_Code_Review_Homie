@@ -1,4 +1,3 @@
-// src/controllers/auth.controller.ts
 import { Request, Response } from 'express';
 import { globalAuthService } from '../../factory/auth.factory';
 import { LoginResponse } from '../../../dtos/login.dto';
