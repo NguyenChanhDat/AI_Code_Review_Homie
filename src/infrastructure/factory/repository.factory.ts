@@ -1,9 +1,9 @@
-import { REPO_TYPE } from '../../../common/types';
-import { createOctokitInstance } from '../../octokit/octokit.service';
-import { AzureDevOpsRepository } from '../azureDevOps.service';
-import { BitbucketRepository } from '../bitbucket.service';
-import { GitHubRepository } from '../github.service';
-import { IRepository } from '../interfaces/IRepository.service';
+import { REPO_TYPE } from '../../common/types';
+import { createOctokitInstance } from '../octokit/octokit.service';
+import { AzureDevOpsRepository } from '../repositories/azureDevOps.service';
+import { BitbucketRepository } from '../repositories/bitbucket.service';
+import { GitHubRepository } from '../repositories/github.service';
+import { IRepository } from '../../domain/IRepository.service';
 
 export class RepositoryFactory {
   static getRepository(input: {
@@ -16,11 +16,12 @@ export class RepositoryFactory {
         const octokitInstance = createOctokitInstance(authToken);
         return new GitHubRepository(octokitInstance);
       }
-      case 'BitBucket':
+      case 'BitBucket': {
         return new BitbucketRepository();
-
-      case 'AzureDevOps':
+      }
+      case 'AzureDevOps': {
         return new AzureDevOpsRepository();
+      }
     }
     throw new Error('Invalid Repository type founded');
   }

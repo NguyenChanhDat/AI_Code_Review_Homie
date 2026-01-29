@@ -1,9 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { aiReviewWorkFlow } from './controller/aiServer.controller.js';
+import { aiReviewWorkFlow } from './infrastructure/restful/controller/aiServer.controller.js';
 import { config } from 'dotenv';
-import { validateReviewerController } from './controller/auth.controller.js';
+import { validateReviewerController } from './infrastructure/restful/controller/auth.controller.js';
 
 config({ path: '.env' });
 

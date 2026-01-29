@@ -1,11 +1,15 @@
 import { createAzureClient } from '../../utils';
-import { IRepository } from './interfaces/IRepository.service';
+import {
+  BaseAzureDevOpsAuthen,
+  GetFileChangeBaseType,
+} from '../types/AzureDevOpsAuth.type';
+import { IRepository } from '../../domain/IRepository.service';
 import {
   NormalizedFileChange,
   PullRequestChangeItem,
   PullRequestIterationChangesResponse,
   PullRequestIterationsResponse,
-} from './types/azureDevOpsFilesChange.type';
+} from '../types/types/azureDevOpsFilesChange.type';
 
 import { createTwoFilesPatch } from 'diff';
 
@@ -17,13 +21,9 @@ export class AzureDevOpsRepository implements IRepository {
   }): Promise<void> {
     throw new Error('Method not implemented.');
   }
-  fetchFileChangesContent = async (input: {
-    authToken: string;
-    pullNumber: number;
-    workspace: string; // organization
-    repositoryName: string;
-    baseUrl?: string; // ex: soget-sone.visualstudio.com
-  }): Promise<string> => {
+  fetchFileChangesContent = async (
+    input: BaseAzureDevOpsAuthen,
+  ): Promise<string> => {
     const { pullNumber, authToken, workspace, repositoryName } = input;
     const baseUrlParsed = input.baseUrl ?? 'dev.azure.com'; // newest version of Azure DevOps API's base Url
     // Please note that curl.exe is for Window Powershell, it would broken if server running on Linux, Mac,....
@@ -86,12 +86,7 @@ export class AzureDevOpsRepository implements IRepository {
   };
   private async getDeletedFile(
     item: PullRequestChangeItem,
-    input: {
-      authToken: string;
-      workspace: string; // organization
-      repositoryName: string;
-      baseUrl: string; // ex: soget-sone.visualstudio.com
-    },
+    input: GetFileChangeBaseType,
   ): Promise<NormalizedFileChange> {
     if (!item.originalObjectId) {
       throw new Error('Missing originalObjectId for deleted file');
@@ -115,12 +110,7 @@ export class AzureDevOpsRepository implements IRepository {
 
   private async getModifiedFile(
     item: PullRequestChangeItem,
-    input: {
-      authToken: string;
-      workspace: string; // organization
-      repositoryName: string;
-      baseUrl: string; // ex: soget-sone.visualstudio.com
-    },
+    input: GetFileChangeBaseType,
   ): Promise<NormalizedFileChange> {
     const { authToken, baseUrl, repositoryName, workspace } = input;
     if (!item.originalObjectId) {
@@ -154,12 +144,7 @@ export class AzureDevOpsRepository implements IRepository {
 
   private async getAddedFile(
     item: PullRequestChangeItem,
-    input: {
-      authToken: string;
-      workspace: string; // organization
-      repositoryName: string;
-      baseUrl: string; // ex: soget-sone.visualstudio.com
-    },
+    input: GetFileChangeBaseType,
   ): Promise<NormalizedFileChange> {
     const { authToken, baseUrl, repositoryName, workspace } = input;
     const content = await this.fetchBlob({
@@ -177,13 +162,7 @@ export class AzureDevOpsRepository implements IRepository {
     };
   }
 
-  private fetchBlob = async (input: {
-    authToken: string;
-    workspace: string; // organization
-    repositoryName: string;
-    baseUrl: string; // ex: dev.azure.com or soget-sone.visualstudio.com
-    blobVersion: string;
-  }): Promise<string> => {
+  private fetchBlob = async (input: FetchBlobRequest): Promise<string> => {
     const { authToken, workspace, repositoryName, baseUrl, blobVersion } =
       input;
     const client = createAzureClient(baseUrl, workspace, authToken);
@@ -231,3 +210,7 @@ export class AzureDevOpsRepository implements IRepository {
     );
   }
 }
+
+type FetchBlobRequest = GetFileChangeBaseType & {
+  blobVersion: string;
+};
