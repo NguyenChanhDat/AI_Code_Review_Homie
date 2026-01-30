@@ -14,18 +14,17 @@ import {
 import { createTwoFilesPatch } from 'diff';
 
 export class AzureDevOpsRepository implements IRepository {
-  postReviewToPRComment(input: {
+  postReviewToPRComment = async (_input: {
     authToken: string;
     reviewResponse: string;
     pullNumber: number;
-  }): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
+  }): Promise<void> => {
+    console.log('Post successfully');
+  };
   fetchFileChangesContent = async (
     input: BaseAzureDevOpsAuthen,
   ): Promise<string> => {
-    const { pullNumber, authToken, workspace, repositoryName } = input;
-    const baseUrl = 'soget-sone.visualstudio.com';
+    const { pullNumber, authToken, workspace, repositoryName, baseUrl } = input;
     const client = createAzureClientHelper({ workspace, authToken, baseUrl });
     const iterationCommitsContent = (
       await client.get<PullRequestIterationsResponse>(

@@ -27,9 +27,9 @@ export function createAzureClientHelper(input: {
   baseUrl?: string | undefined;
 }) {
   const { authToken, workspace, baseUrl } = input;
-  const urlParsed = baseUrl ?? 'dev.azure.com';
+  const baseUrlParsed = baseUrl ?? 'dev.azure.com';
   return axios.create({
-    baseURL: `https://${urlParsed}/${workspace}`,
+    baseURL: `https://${baseUrlParsed}/${workspace}`,
     headers: {
       Authorization: `Basic ${Buffer.from(`:${authToken}`).toString('base64')}`,
       Accept: 'application/json',

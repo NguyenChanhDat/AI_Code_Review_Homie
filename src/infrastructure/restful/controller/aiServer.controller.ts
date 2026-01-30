@@ -1,22 +1,44 @@
 import { Request, Response } from 'express';
-import { GetAIReviewWorkflowUseCase } from '../../../use-case/AIReviewFlow/getAIReviewWorkflow.usecase';
+import { globalGetAIReviewWorkflowUseCase } from '../../factory/globalInject.factory';
 
 export const aiReviewWorkFlow = async (req: Request, res: Response) => {
   try {
-    const { pullNumber, authToken, repositoryName, baseUrl, workspace } =
-      req.body;
-    const aiReviewUseCase = new GetAIReviewWorkflowUseCase();
-    const result = aiReviewUseCase.execute({
-      authToken,
+    const payload = req.body;
+    const pr = payload.resource;
+    if (!pr) {
+      return res.status(400).json({ error: 'no pull request resource' });
+    }
+
+    const pullNumber = pr.pullRequestId;
+    const repositoryName = pr.repository?.name;
+    const repoUrl = pr.repository?.url;
+
+    if (!repoUrl) throw new Error('repository url missing');
+
+    const url = new URL(repoUrl);
+    const pathParts = url.pathname.split('/').filter(Boolean);
+    const baseUrl = `${url.host}/${pathParts[0]}`;
+    // org name = first path segment
+
+    const workspace = pr.repository?.project?.name;
+    console.log('workspace, ', workspace);
+
+    if (!pullNumber || !repositoryName || !workspace || !baseUrl) {
+      return res.status(400).json({ error: 'Missing pr fields' });
+    }
+    const aiReviewCodePAT = process.env.AI_REVIEW_PAT;
+    if (!aiReviewCodePAT) throw new Error('Missing AI Review PAT');
+    const result = await globalGetAIReviewWorkflowUseCase.execute({
+      authToken: aiReviewCodePAT,
       pullNumber,
       repositoryName,
       workspace,
       baseUrl,
     });
-    res.status(200).json({ ok: result });
+
+    res.status(200).json({ ok: true, result });
   } catch (error) {
-    console.log(error);
-    res.status(500);
-    res.send('Internall Server Error');
+    console.error('ai review error:', error);
+    res.status(500).send('internal server error');
   }
 };

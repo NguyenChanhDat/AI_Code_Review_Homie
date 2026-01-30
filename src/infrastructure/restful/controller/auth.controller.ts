@@ -1,14 +1,9 @@
 import { Request, Response } from 'express';
-import { globalAuthService } from '../../factory/auth.factory';
 import { LoginResponse } from '../../../dtos/login.dto';
+import { globalAuthService } from '../../factory/globalInject.factory';
 
 export async function validateReviewerController(req: Request, res: Response) {
   const personalAccessToken = req.header('x-azure-personalAccessToken');
-  if (!personalAccessToken) {
-    return res
-      .status(400)
-      .json({ message: 'missing personal access token header' });
-  }
   const { organization, project, repositoryName } = req.body;
 
   if (!personalAccessToken || !organization || !project || !repositoryName) {

@@ -1,3 +1,4 @@
+import { globalProjectService } from '../../infrastructure/factory/globalInject.factory';
 import { IUseCase } from '../base/IUseCase';
 import { IProjectService } from './IProject.service';
 import {
@@ -9,7 +10,9 @@ export class GetUseProjectUseCase implements IUseCase<
   GetUseProjectUseCaseInput,
   GetUseProjectUseCaseOutput
 > {
-  constructor(private readonly projectService: IProjectService) {}
+  constructor(
+    private readonly projectService: IProjectService = globalProjectService,
+  ) {}
   execute(
     request: GetUseProjectUseCaseInput,
   ): Promise<GetUseProjectUseCaseOutput> {

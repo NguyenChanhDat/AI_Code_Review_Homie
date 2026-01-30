@@ -5,7 +5,7 @@ import {
   GetUseProjectUseCaseOutput,
 } from './types/project.type';
 
-export class GetUserProjectService implements IProjectService {
+export class ProjectService implements IProjectService {
   getUserProject = async (
     request: GetUseProjectUseCaseInput,
   ): Promise<GetUseProjectUseCaseOutput> => {
@@ -13,14 +13,16 @@ export class GetUserProjectService implements IProjectService {
     const client = this.createAzureClientHelperGetProject({
       authToken: personalAccessToken,
     });
-    const projects = (await client.get<GetUseProjectUseCaseOutput>(
-      `/${organization}/_apis/projects`,
-      {
-        params: {
-          'api-version': '7.1',
+    const projects = (
+      await client.get<GetUseProjectUseCaseOutput>(
+        `/${organization}/_apis/projects`,
+        {
+          params: {
+            'api-version': '7.1',
+          },
         },
-      },
-    )) as unknown as GetUseProjectUseCaseOutput;
+      )
+    ).data as unknown as GetUseProjectUseCaseOutput;
     return projects;
   };
 
