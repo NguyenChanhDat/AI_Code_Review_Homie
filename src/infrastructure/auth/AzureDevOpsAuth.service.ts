@@ -86,7 +86,6 @@ export class AzureDevOpsAuthService implements IAuthenService {
       const scope = policy.settings?.scope?.[0];
       if (!scope) return false;
 
-      // repo-specific or global
       if (scope.repositoryId && scope.repositoryId !== repositoryId) {
         return false;
       }

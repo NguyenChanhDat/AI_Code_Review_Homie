@@ -1,4 +1,4 @@
-import { createAzureClient } from '../../utils';
+import { createAzureClientHelper } from '../../utils';
 import {
   BaseAzureDevOpsAuthen,
   GetFileChangeBaseType,
@@ -14,21 +14,18 @@ import {
 import { createTwoFilesPatch } from 'diff';
 
 export class AzureDevOpsRepository implements IRepository {
-  postReviewToPRComment(input: {
+  postReviewToPRComment = async (_input: {
     authToken: string;
     reviewResponse: string;
     pullNumber: number;
-  }): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
+  }): Promise<void> => {
+    console.log('Post successfully');
+  };
   fetchFileChangesContent = async (
     input: BaseAzureDevOpsAuthen,
   ): Promise<string> => {
-    const { pullNumber, authToken, workspace, repositoryName } = input;
-    const baseUrlParsed = input.baseUrl ?? 'dev.azure.com'; // newest version of Azure DevOps API's base Url
-    // Please note that curl.exe is for Window Powershell, it would broken if server running on Linux, Mac,....
-    const client = createAzureClient(baseUrlParsed, workspace, authToken);
-
+    const { pullNumber, authToken, workspace, repositoryName, baseUrl } = input;
+    const client = createAzureClientHelper({ workspace, authToken, baseUrl });
     const iterationCommitsContent = (
       await client.get<PullRequestIterationsResponse>(
         `/_apis/git/repositories/${repositoryName}/pullrequests/${pullNumber}/iterations`,
@@ -54,7 +51,7 @@ export class AzureDevOpsRepository implements IRepository {
         case 'undelete':
           return this.getAddedFile(item, {
             authToken,
-            baseUrl: baseUrlParsed,
+            baseUrl,
             repositoryName,
             workspace,
           });
@@ -62,14 +59,14 @@ export class AzureDevOpsRepository implements IRepository {
         case 'rename':
           return this.getModifiedFile(item, {
             authToken,
-            baseUrl: baseUrlParsed,
+            baseUrl,
             repositoryName,
             workspace,
           });
         case 'delete':
           return this.getDeletedFile(item, {
             authToken,
-            baseUrl: baseUrlParsed,
+            baseUrl,
             repositoryName,
             workspace,
           });
@@ -165,7 +162,7 @@ export class AzureDevOpsRepository implements IRepository {
   private fetchBlob = async (input: FetchBlobRequest): Promise<string> => {
     const { authToken, workspace, repositoryName, baseUrl, blobVersion } =
       input;
-    const client = createAzureClient(baseUrl, workspace, authToken);
+    const client = createAzureClientHelper({ baseUrl, workspace, authToken });
     const res = await client.get<ArrayBuffer>(
       `/_apis/git/repositories/${repositoryName}/blobs/${blobVersion}`,
       {

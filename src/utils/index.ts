@@ -21,11 +21,17 @@ export async function runPowerShellCommand(psCommand: string): Promise<string> {
   });
 }
 
-export function createAzureClient(baseUrl: string, workspace: string, token: string) {
+export function createAzureClientHelper(input: {
+  workspace: string;
+  authToken: string;
+  baseUrl?: string | undefined;
+}) {
+  const { authToken, workspace, baseUrl } = input;
+  const baseUrlParsed = baseUrl ?? 'dev.azure.com';
   return axios.create({
-    baseURL: `https://${baseUrl}/${workspace}`,
+    baseURL: `https://${baseUrlParsed}/${workspace}`,
     headers: {
-      Authorization: `Basic ${Buffer.from(`:${token}`).toString('base64')}`,
+      Authorization: `Basic ${Buffer.from(`:${authToken}`).toString('base64')}`,
       Accept: 'application/json',
     },
   });

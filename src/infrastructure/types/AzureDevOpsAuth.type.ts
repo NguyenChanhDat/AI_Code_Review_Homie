@@ -46,7 +46,10 @@ export type PolicyConfiguration = {
   };
 };
 
-export type BaseAzureDevOpsAuthen = BaseAuth & { pullNumber: number };
+export type BaseAzureDevOpsAuthen = BaseAuth & {
+  pullNumber: number;
+  baseUrl: string;
+};
 
 export type GetFileChangeBaseType = Omit<
   BaseAzureDevOpsAuthen,
